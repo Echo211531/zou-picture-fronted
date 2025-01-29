@@ -15,7 +15,7 @@ export default class PictureEditWebSocket {
   connect() {
     const DEV_BASE_URL = "ws://localhost:8123";
     // 线上地址
-     const PROD_BASE_URL = "ws://backend.echobistar.cn";
+     const PROD_BASE_URL = "xxx";
     const url = `${PROD_BASE_URL}/api/ws/picture/edit?pictureId=${this.pictureId}`
     this.socket = new WebSocket(url)
 
