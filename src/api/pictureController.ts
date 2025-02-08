@@ -137,6 +137,61 @@ export async function doPictureReviewUsingPost(
   })
 }
 
+/** searchPictureByColor POST /api/picture/search/color */
+export async function searchPictureByColorUsingPost(
+  body: API.SearchPictureByColorRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseListPictureVO_>('/api/picture/search/color', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** searchSimilarImages POST /api/picture/search/image */
+export async function searchSimilarImagesUsingPost(
+  body: {},
+  imageFile?: File,
+  options?: { [key: string]: any }
+) {
+  const formData = new FormData();
+
+  // 如果提供了imageFile，则添加到formData
+  if (imageFile) {
+    formData.append('imageFile', imageFile, imageFile.name); // 添加文件名
+  }
+
+  // 将body中的其他数据添加到formData
+  Object.keys(body).forEach((key) => {
+    const value = body[key];
+
+    if (value !== undefined && value !== null) {
+      if (typeof value === 'object' && !(value instanceof File)) {
+        if (Array.isArray(value)) {
+          value.forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, JSON.stringify(value));
+        }
+      } else {
+        formData.append(key, value);
+      }
+    }
+  });
+
+  return request<API.BaseResponseListPictureVO_>('/api/picture/search/image', {
+    method: 'POST',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    ...(options || {}),
+  });
+}
+
 /** listPictureTagCategory GET /api/picture/tag_category */
 export async function listPictureTagCategoryUsingGet(options?: { [key: string]: any }) {
   return request<API.BaseResponsePictureTagCategory_>('/api/picture/tag_category', {

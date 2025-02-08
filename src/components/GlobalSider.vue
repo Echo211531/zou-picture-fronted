@@ -13,7 +13,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, h, ref, watchEffect } from 'vue'
-import { EditOutlined, PictureOutlined, UserOutlined,TeamOutlined } from '@ant-design/icons-vue'
+import { EditOutlined, PictureOutlined, UserOutlined,TeamOutlined,SyncOutlined } from '@ant-design/icons-vue'
 import { useRouter } from "vue-router";
 import { useLoginUserStore } from '@/stores/userloginUserStore'
 import { SPACE_TYPE_ENUM } from '@/constants/space'
@@ -37,6 +37,11 @@ const fixedMenuItems = [
     key: '/add_space?type=' + SPACE_TYPE_ENUM.TEAM,
     label: '创建团队',
     icon: () => h(TeamOutlined),
+  },
+  {
+    key: '/searchByPicture',
+    label: '以图搜图',
+    icon: () => h(SyncOutlined),
   },
   {
     key: '/ai_message',

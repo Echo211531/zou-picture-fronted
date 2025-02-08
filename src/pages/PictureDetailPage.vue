@@ -4,16 +4,13 @@
       <!-- 图片展示区 -->
       <a-col :sm="24" :md="16" :xl="11">
         <a-card title="图片预览">
-          <a-image
-            style="max-height: 600px; object-fit: contain"
-            :src="picture.url"
-          />
+          <a-image style="max-height: 600px; object-fit: contain" :src="picture.url" />
         </a-card>
       </a-col>
       <!-- 图片信息区 -->
       <a-col :sm="24" :md="8" :xl="13">
         <a-card title="图片信息">
-          <a-descriptions :column="1" id="large-text" >
+          <a-descriptions :column="1" id="large-text">
             <a-descriptions-item label="作者">
               <a-space>
                 <a-avatar :size="30" :src="picture.user?.userAvatar" />
@@ -49,6 +46,19 @@
             <a-descriptions-item label="大小">
               {{ formatSize(picture.picSize) }}
             </a-descriptions-item>
+            <a-descriptions-item label="主色调">
+              <a-space>
+                {{ picture.picColor ?? '-' }}
+                <div
+                  v-if="picture.picColor"
+                  :style="{
+                    backgroundColor: toHexColor(picture.picColor),
+                    width: '16px',
+                    height: '16px',
+                  }"
+                />
+              </a-space>
+            </a-descriptions-item>
           </a-descriptions>
           <!--图片操作-->
           <a-space wrap>
@@ -80,10 +90,10 @@
 import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import { computed, onMounted, ref } from 'vue'
-import { downloadImage, formatSize } from '../utils'
-import { useLoginUserStore } from '@/stores/userloginUserStore'
+import { downloadImage, formatSize, toHexColor } from '../utils'
 import router from '@/router'
 import { SPACE_PERMISSION_ENUM } from '@/constants/space'
+
 // 通用权限检查函数
 function createPermissionChecker(permission: string) {
   return computed(() => {
@@ -95,14 +105,12 @@ function createPermissionChecker(permission: string) {
 const canEdit = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_EDIT)
 const canDelete = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_DELETE)
 
-
 //获取路由动态参数
 const props = defineProps<{
   id: string | number
 }>()
 
 const picture = ref<API.PictureVO>({})
-
 
 // 获取图片详情
 const fetchPictureDetail = async () => {
@@ -129,9 +137,9 @@ const doEdit = () => {
   router.push({
     path: '/add_picture',
     query: {
-      id: picture.value.id,  //携带图片id
-      spaceId: picture.value.spaceId    //以及对应的空间id即可
-    }
+      id: picture.value.id, //携带图片id
+      spaceId: picture.value.spaceId, //以及对应的空间id即可
+    },
   })
 }
 
@@ -149,16 +157,14 @@ const doDelete = async () => {
   }
 }
 
+
+
 onMounted(() => {
   fetchPictureDetail()
 })
-
 </script>
 
 <style scoped>
-#pictureDetailPage  {
-
+#pictureDetailPage {
 }
-
-
 </style>

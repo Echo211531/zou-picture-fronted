@@ -17,6 +17,8 @@ import SpaceDetailPage from '@/pages/SpaceDetailPage.vue'
 import AiMessage from '@/pages/AiMessage.vue'
 import SpaceAnalyzePage from '@/components/analyze/SpaceAnalyzePage.vue'
 import SpaceUserManagePage from '@/pages/SpaceUserManagePage.vue'
+import SearchImage from '@/pages/SearchImage.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,6 +90,11 @@ const router = createRouter({
       name: '空间成员管理',
       component: SpaceUserManagePage,
       props: true,
+    },
+    {
+      path: '/searchByPicture',
+      name: '以图搜图',
+      component: SearchImage,
     },
     {
       path: '/ai_message',
