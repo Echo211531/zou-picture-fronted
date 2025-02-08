@@ -48,11 +48,31 @@ myAxios.interceptors.response.use(
     }
     return response
   },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    return Promise.reject(error)
-  },
-)
+  async function (error) {
+    // 检查响应状态码是否为401
+    if (error.response && error.response.status === 401) {
+      const loginUserStore = useLoginUserStore();
+      const originalRequest = error.config;
+
+      // 检查是否有特定的错误信息表示Token已过期
+      if (error.response.data.message === "Token expired") {
+        // 清除JWT Token
+        loginUserStore.clearJwtToken();
+
+        // 提示用户Token已过期
+        message.error('您的会话已过期，请重新登录');
+
+        // 跳转到登录页面
+        window.location.href = `/user/login?redirect=${encodeURIComponent(window.location.href)}`;
+      } else {
+        // 对于其他401错误，直接拒绝Promise
+        return Promise.reject(error);
+      }
+    } else {
+      // 不是401错误，继续抛出错误
+      return Promise.reject(error);
+    }
+  }
+);
 
 export default myAxios
