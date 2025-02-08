@@ -42,7 +42,11 @@
     </a-flex>
     <!-- 搜索表单 -->
     <PictureSearchForm :onSearch="onSearch" />
-    <br>
+    <div style="margin-bottom: 16px" />
+    <!-- 按颜色搜索，跟其他搜索条件独立 -->
+    <a-form-item label="按颜色搜索">
+      <color-picker format="hex" @pureColorChange="onColorChange" />
+    </a-form-item>
     <!-- 图片列表 -->
     <PictureList :dataList="dataList" :loading="loading"
                  :showOp="true"
@@ -65,11 +69,13 @@ import { BarChartOutlined, TeamOutlined } from '@ant-design/icons-vue'
 import { onMounted, h, ref, watch, computed } from 'vue'
 import { getSpaceVoByIdUsingGet } from '@/api/spaceController'
 import { message } from 'ant-design-vue'
-import { listPictureVoByPageUsingPost } from '@/api/pictureController'
+import { listPictureVoByPageUsingPost, searchPictureByColorUsingPost } from '@/api/pictureController'
 import { formatSize } from '@/utils'
 import PictureList from '@/components/PictureList.vue'
 import PictureSearchForm from '@/components/pictureSearchForm.vue'
 import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP } from '../constants/space'
+import { ColorPicker } from 'vue3-colorpicker'
+import "vue3-colorpicker/style.css";
 
 const props = defineProps<{
   id: string | number
@@ -155,6 +161,7 @@ function createPermissionChecker(permission: string) {
   })
 }
 
+
 // 定义权限检查
 const canManageSpaceUser = createPermissionChecker(SPACE_PERMISSION_ENUM.SPACE_USER_MANAGE)  //成员管理
 const canUploadPicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_UPLOAD)  //上传图片
@@ -166,7 +173,20 @@ onMounted(() => {
 })
 
 
-
+//切换颜色事件
+const onColorChange = async (color: string) => {
+  const res = await searchPictureByColorUsingPost({
+    picColor: color,
+    spaceId: props.id,
+  })
+  if (res.data.code === 0 && res.data.data) {
+    const data = res.data.data ?? [];
+    dataList.value = data;
+    total.value = data.length;
+  } else {
+    message.error('获取数据失败，' + res.data.message)
+  }
+}
 
 </script>
 
